@@ -1,0 +1,86 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Order #{{ order.pk }}{% endblock %}
+{% block page_icon %}receipt{% endblock %}
+{% block page_title %}Order #{{ order.pk }}{% endblock %}
+
+{% block content %}
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>Order #{{ order.pk }}</h1>
+    <div class="breadcrumb"><a href="{% url 'dash_home' %}">Dashboard</a> <i class="fas fa-chevron-right"></i> <a href="{% url 'dash_orders' %}">Orders</a> <i class="fas fa-chevron-right"></i> <span>#{{ order.pk }}</span></div>
+  </div>
+  <a href="{% url 'dash_orders' %}" class="btn btn-ghost"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 300px;gap:1.5rem;align-items:start">
+  <div>
+    <!-- ITEMS -->
+    <div class="data-card fade-up" style="margin-bottom:1.25rem">
+      <div class="data-card-head"><div class="data-card-title"><i class="fas fa-bag-shopping"></i> Items Ordered</div></div>
+      <table class="data-table">
+        <thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr></thead>
+        <tbody>
+          {% for item in order.items.all %}
+          <tr>
+            <td><div class="td-name">{{ item.product_name }}</div></td>
+            <td><span class="badge badge-gray">× {{ item.quantity }}</span></td>
+            <td>GH₵{{ item.price }}</td>
+            <td style="font-weight:800;color:var(--p)">GH₵{{ item.get_subtotal }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div style="display:flex;justify-content:flex-end;padding:1rem 1.5rem;border-top:1px solid var(--border)">
+        <div style="font-size:1.1rem;font-weight:900;color:var(--p)">Total: GH₵{{ order.total_price }}</div>
+      </div>
+    </div>
+
+    <!-- DELIVERY -->
+    <div class="data-card fade-up" style="padding:1.5rem">
+      <h3 style="font-size:.9rem;font-weight:800;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem"><i class="fas fa-location-dot" style="color:var(--p)"></i> Delivery Info</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;font-size:.875rem">
+        <div><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.3rem">Customer</div><div style="font-weight:700">{{ order.first_name }} {{ order.last_name }}</div></div>
+        <div><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.3rem">Email</div><div>{{ order.email }}</div></div>
+        <div><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.3rem">Phone</div><div>{{ order.phone }}</div></div>
+        <div><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.3rem">City</div><div>{{ order.city }}</div></div>
+        <div style="grid-column:1/-1"><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.3rem">Address</div><div>{{ order.address }}</div></div>
+        {% if order.notes %}<div style="grid-column:1/-1"><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.3rem">Notes</div><div style="color:var(--t5)"><em>{{ order.notes }}</em></div></div>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: STATUS + INFO -->
+  <div>
+    <div class="data-card fade-up" style="padding:1.5rem;margin-bottom:1.1rem">
+      <h3 style="font-size:.9rem;font-weight:800;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem"><i class="fas fa-circle-info" style="color:var(--p)"></i> Order Summary</h3>
+      <div style="display:flex;flex-direction:column;gap:.6rem;font-size:.84rem">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--t5)">Order ID</span><span style="font-weight:800;color:var(--p)">#{{ order.pk }}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--t5)">Date</span><span style="font-weight:700">{{ order.created_at|date:"M d, Y" }}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--t5)">Items</span><span style="font-weight:700">{{ order.items.count }}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--t5)">Total</span><span style="font-weight:900;color:var(--p);font-size:1rem">GH₵{{ order.total_price }}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--t5)">Status</span>
+          <span class="badge {% if order.status == 'delivered' %}badge-green{% elif order.status == 'pending' %}badge-yellow{% elif order.status == 'processing' %}badge-blue{% elif order.status == 'cancelled' %}badge-red{% else %}badge-purple{% endif %}">
+            {{ order.get_status_display }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPDATE STATUS -->
+    <div class="data-card fade-up" style="padding:1.5rem">
+      <h3 style="font-size:.9rem;font-weight:800;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem"><i class="fas fa-sliders" style="color:var(--p)"></i> Update Status</h3>
+      <form method="POST">{% csrf_token %}
+        <div class="form-group">
+          <label class="form-label">New Status</label>
+          <select name="status" class="form-control">
+            {% for val, label in status_choices %}
+            <option value="{{ val }}" {% if order.status == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center"><i class="fas fa-check"></i> Update Status</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

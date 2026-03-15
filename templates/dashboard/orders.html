@@ -1,0 +1,50 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Orders{% endblock %}
+{% block page_icon %}receipt{% endblock %}
+{% block page_title %}Orders{% endblock %}
+
+{% block content %}
+<div class="page-hd">
+  <div class="page-hd-left"><h1>Orders</h1><p>Track and manage all customer orders</p></div>
+</div>
+
+<!-- STATUS FILTERS -->
+<div style="margin-bottom:1.25rem" class="fade-up">
+  <div class="filter-tabs">
+    <a href="{% url 'dash_orders' %}" class="ftab {% if not active_status %}active{% endif %}">All Orders</a>
+    {% for val, label in status_choices %}
+    <a href="{% url 'dash_orders' %}?status={{ val }}" class="ftab {% if active_status == val %}active{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="data-card fade-up">
+  {% if orders %}
+  <table class="data-table">
+    <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td><span style="font-weight:900;color:var(--p)">#{{ o.pk }}</span></td>
+        <td>
+          <div class="td-name">{{ o.first_name }} {{ o.last_name }}</div>
+          <div class="td-sub"><i class="fas fa-envelope" style="font-size:.65rem"></i> {{ o.email }}</div>
+        </td>
+        <td><span class="badge badge-gray">{{ o.items.count }} item{{ o.items.count|pluralize }}</span></td>
+        <td style="font-weight:800">GH₵{{ o.total_price }}</td>
+        <td>
+          <span class="badge {% if o.status == 'delivered' %}badge-green{% elif o.status == 'pending' %}badge-yellow{% elif o.status == 'processing' %}badge-blue{% elif o.status == 'cancelled' %}badge-red{% else %}badge-purple{% endif %}">
+            {{ o.get_status_display }}
+          </span>
+        </td>
+        <td style="color:var(--t3);font-size:.8rem">{{ o.created_at|date:"M d, Y" }}</td>
+        <td><a href="{% url 'dash_order_detail' o.pk %}" class="btn btn-ghost btn-sm"><i class="fas fa-eye"></i> View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state"><div class="empty-icon"><i class="fas fa-receipt"></i></div><h3>No orders found</h3><p>Orders will appear here once customers place them</p></div>
+  {% endif %}
+</div>
+{% endblock %}

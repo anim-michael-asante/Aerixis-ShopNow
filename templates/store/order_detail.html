@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.pk }} — ShopNow{% endblock %}
+{% block content %}
+<div class="page-hd"><h1><i class="fas fa-receipt" style="color:var(--p)"></i> Order #{{ order.pk }}</h1><div class="breadcrumb"><a href="/"><i class="fas fa-house"></i> Home</a> <i class="fas fa-chevron-right"></i> <a href="{% url 'order_list' %}">Orders</a> <i class="fas fa-chevron-right"></i> #{{ order.pk }}</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.25rem">
+  <div class="card reveal" style="padding:1.35rem"><h3 style="font-size:.875rem;font-weight:800;margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem"><i class="fas fa-circle-info" style="color:var(--p)"></i> Order Info</h3>
+    <table style="font-size:.84rem;width:100%;border-collapse:collapse">
+      <tr><td style="padding:.35rem 0;color:var(--t4);width:90px">Status</td><td><span style="background:{{ order.status_color }};color:white;padding:.18rem .65rem;border-radius:999px;font-size:.72rem;font-weight:800">{{ order.get_status_display }}</span></td></tr>
+      <tr><td style="padding:.35rem 0;color:var(--t4)">Date</td><td style="font-weight:700">{{ order.created_at|date:"M d, Y — H:i" }}</td></tr>
+      <tr><td style="padding:.35rem 0;color:var(--t4)">Total</td><td style="font-weight:900;color:var(--p);font-size:1rem">GH₵{{ order.total_price }}</td></tr>
+      <tr><td style="padding:.35rem 0;color:var(--t4)">Payment</td><td style="font-weight:700"><i class="fas fa-money-bill-wave" style="color:var(--success)"></i> Cash on Delivery</td></tr>
+    </table>
+  </div>
+  <div class="card reveal" style="padding:1.35rem"><h3 style="font-size:.875rem;font-weight:800;margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem"><i class="fas fa-location-dot" style="color:var(--p)"></i> Delivery Address</h3>
+    <div style="font-size:.84rem;line-height:1.9;color:var(--t6)"><strong style="color:var(--t9)">{{ order.first_name }} {{ order.last_name }}</strong><br><i class="fas fa-map-pin" style="color:var(--p);font-size:.7rem"></i> {{ order.address }}, {{ order.city }}<br><i class="fas fa-envelope" style="color:var(--p);font-size:.7rem"></i> {{ order.email }}<br><i class="fas fa-phone" style="color:var(--p);font-size:.7rem"></i> {{ order.phone }}{% if order.notes %}<br><em style="color:var(--t4)">{{ order.notes }}</em>{% endif %}</div>
+  </div>
+</div>
+<div class="card reveal" style="padding:1.35rem;margin-bottom:1.25rem"><h3 style="font-size:.875rem;font-weight:800;margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem"><i class="fas fa-bag-shopping" style="color:var(--p)"></i> Items Ordered</h3>
+{% for item in order.items.all %}
+<div style="display:flex;align-items:center;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--border)"><div style="flex:1;font-weight:700;font-size:.875rem">{{ item.product_name }}</div><div style="color:var(--t4);font-size:.84rem">× {{ item.quantity }}</div><div style="font-weight:900;color:var(--p)">GH₵{{ item.get_subtotal }}</div></div>
+{% endfor %}
+<div style="display:flex;justify-content:flex-end;margin-top:.85rem"><div style="font-size:1rem;font-weight:900;color:var(--p)">Total: GH₵{{ order.total_price }}</div></div></div>
+<div style="display:flex;gap:.75rem;flex-wrap:wrap"><a href="{% url 'order_list' %}" class="btn btn-ghost"><i class="fas fa-arrow-left"></i> Back</a>{% if order.status == 'pending' %}<form method="POST" action="{% url 'cancel_order' order.pk %}">{% csrf_token %}<button type="submit" class="btn btn-danger" onclick="return confirm('Cancel?')"><i class="fas fa-xmark"></i> Cancel</button></form>{% endif %}<a href="{% url 'product_list' %}" class="btn btn-primary" style="margin-left:auto"><i class="fas fa-store"></i> Continue Shopping</a></div>
+{% endblock %}

@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% block title %}ShopNow — Shop Smart{% endblock %}
+{% block extra_css %}
+<style>
+/* HERO SPLIT */
+.hero-split{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;border-radius:var(--r-xl);overflow:hidden;
+  border:1px solid var(--border);margin-bottom:1.75rem;
+  min-height:240px;
+}
+.hero-img-pane{
+  background:linear-gradient(135deg,#E8192C 0%,#B91020 100%);
+  position:relative;overflow:hidden;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.hero-img-pane img{
+  width:100%;height:100%;object-fit:cover;
+  display:block;
+}
+.hero-text-pane{
+  background:var(--white);
+  padding:2rem 2.25rem;
+  display:flex;flex-direction:column;justify-content:center;
+  border-left:1px solid var(--border);
+}
+.hero-overline{
+  display:flex;align-items:center;gap:.6rem;
+  font-size:.75rem;font-weight:600;color:var(--t4);
+  margin-bottom:.85rem;
+}
+.hero-overline::before{content:'';width:24px;height:1.5px;background:var(--t4)}
+.hero-text-pane h1{
+  font-size:clamp(1.5rem,3vw,2.2rem);font-weight:900;
+  line-height:1.15;margin-bottom:.75rem;
+}
+.hero-text-pane p{font-size:.875rem;color:var(--t6);line-height:1.7;margin-bottom:1.25rem}
+.hero-text-pane p strong{color:var(--t9)}
+.hero-brands{
+  display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;
+  flex-wrap:wrap;
+}
+.brand-chip{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r);padding:.3rem .75rem;
+  font-size:.75rem;font-weight:800;color:var(--t6);
+  letter-spacing:.04em;
+}
+.hero-cta{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+/* promo banner */
+.promo-card{
+  border-radius:var(--r-xl);overflow:hidden;
+  margin-bottom:1.75rem;
+  background:linear-gradient(135deg,#F5C842,#F0A500);
+  padding:1.75rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;flex-wrap:wrap;
+}
+.promo-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(0,0,0,.5);margin-bottom:.35rem}
+.promo-card h2{font-size:1.35rem;font-weight:900;color:#111}
+.promo-card p{font-size:.85rem;color:rgba(255,255,255,.85)}
+.btn-promo{
+  background:var(--p);color:white;font-weight:800;
+  padding:.65rem 1.5rem;border-radius:999px;font-size:.875rem;
+  display:inline-flex;align-items:center;gap:.4rem;border:none;
+  cursor:pointer;transition:all var(--tr);flex-shrink:0;text-decoration:none;
+}
+.btn-promo:hover{box-shadow:0 6px 20px rgba(232,25,44,.35);transform:translateY(-1px)}
+/* category pills row */
+.cat-row{
+  display:flex;gap:.75rem;flex-wrap:wrap;
+  margin-bottom:1.75rem;
+}
+.cat-pill{
+  display:flex;align-items:center;gap:.5rem;
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:999px;padding:.4rem 1rem;
+  font-size:.8rem;font-weight:600;color:var(--t6);
+  cursor:pointer;text-decoration:none;
+  transition:all var(--tr);
+}
+.cat-pill i{font-size:.78rem;color:var(--t4)}
+.cat-pill:hover,.cat-pill.active{
+  border-color:var(--p);color:var(--p);background:var(--p-soft);
+}
+.cat-pill:hover i,.cat-pill.active i{color:var(--p)}
+/* section nav arrows */
+.sec-nav{display:flex;gap:.4rem}
+.sec-nav-btn{
+  width:34px;height:34px;border-radius:var(--r);
+  border:1.5px solid var(--border);background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--t6);font-size:.85rem;
+  transition:all var(--tr);
+}
+.sec-nav-btn:hover{border-color:var(--p);color:var(--p);background:var(--p-soft)}
+.sec-nav-btn.active{background:var(--p);border-color:var(--p);color:white}
+@media(max-width:860px){
+  .hero-split{grid-template-columns:1fr}
+  .hero-img-pane{min-height:200px}
+}
+@media(max-width:580px){
+  .cat-row{display:grid;grid-template-columns:repeat(3,1fr)}
+  .cat-pill{justify-content:center}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO SPLIT -->
+<div class="hero-split reveal">
+  <div class="hero-img-pane">
+    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&h=500&fit=crop&auto=format" alt="Shoes"/>
+  </div>
+  <div class="hero-text-pane">
+    <div class="hero-overline">Special offers</div>
+    <h1>Top Products<br>at Great Prices</h1>
+    <p>Best discount <strong>up to 35% OFF</strong> on all featured products this week!</p>
+    <div class="hero-brands">
+      <span class="brand-chip">FASHION</span>
+      <span class="brand-chip">ELECTRONICS</span>
+      <span class="brand-chip">SPORTS</span>
+    </div>
+    <div class="hero-cta">
+      <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
+        <i class="fas fa-store"></i> Shop Now
+      </a>
+      <a href="{% url 'product_list' %}?sort=price" class="btn btn-ghost btn-lg">
+        Best Deals <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY PILLS -->
+<div class="cat-row reveal">
+  <a href="{% url 'product_list' %}" class="cat-pill active">
+    <i class="fas fa-bag-shopping"></i> All
+  </a>
+  {% for cat in categories %}
+  <a href="{% url 'product_list' %}?category={{ cat.slug }}" class="cat-pill">
+    <i class="fas {{ cat.icon }}"></i> {{ cat.name }}
+  </a>
+  {% endfor %}
+</div>
+
+<!-- TOP PRODUCTS -->
+{% if featured_products %}
+<div class="reveal">
+  <div class="sec-hd">
+    <h2>Top <span>Products</span></h2>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <a href="{% url 'product_list' %}">View All</a>
+      <div class="sec-nav">
+        <button class="sec-nav-btn" onclick="scrollGrid('feat',-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="sec-nav-btn active" onclick="scrollGrid('feat',1)"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="products-grid" id="feat-grid">
+    {% for product in featured_products %}
+    {% include 'store/product_card.html' with product=product %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- PROMO BANNER -->
+<div class="promo-card reveal" style="margin-top:1.75rem">
+  <div>
+    <div class="promo-label"><i class="fas fa-bolt"></i> &nbsp;Flash Sale</div>
+    <h2>Up to 50% Off — Limited Time</h2>
+    <p style="color:rgba(0,0,0,.6)">Exclusive deals across all categories. Don't miss out!</p>
+  </div>
+  <a href="{% url 'product_list' %}" class="btn-promo">
+    Shop the Sale <i class="fas fa-arrow-right"></i>
+  </a>
+</div>
+
+<!-- NEW ARRIVALS -->
+{% if new_arrivals %}
+<div class="reveal" style="margin-top:1.75rem">
+  <div class="sec-hd">
+    <h2>New <span>Arrivals</span></h2>
+    <a href="{% url 'product_list' %}?sort=-created_at">See all</a>
+  </div>
+  <div class="products-grid">
+    {% for product in new_arrivals %}
+    {% include 'store/product_card.html' with product=product %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script>
+function scrollGrid(id, dir) {
+  const g = document.getElementById(id + '-grid');
+  if (g) g.scrollBy({ left: dir * 320, behavior: 'smooth' });
+}
+</script>
+{% endblock %}

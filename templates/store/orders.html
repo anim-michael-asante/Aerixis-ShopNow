@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}My Orders — ShopNow{% endblock %}
+{% block content %}
+<div class="page-hd"><h1><i class="fas fa-box-open" style="color:var(--p)"></i> My Orders</h1><div class="breadcrumb"><a href="/"><i class="fas fa-house"></i> Home</a> <i class="fas fa-chevron-right"></i> Orders</div></div>
+{% if orders %}
+<div style="display:flex;flex-direction:column;gap:.75rem">
+{% for order in orders %}
+<div class="card reveal" style="padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+  <div><div style="font-size:.68rem;color:var(--t4);text-transform:uppercase;letter-spacing:.06em">Order #{{ order.pk }}</div><div style="font-weight:800;font-size:.95rem">{{ order.created_at|date:"M d, Y" }}</div><div style="font-size:.78rem;color:var(--t4);margin-top:.15rem"><i class="fas fa-box"></i> {{ order.items.count }} item{{ order.items.count|pluralize }}</div></div>
+  <span style="background:{{ order.status_color }};color:white;padding:.22rem .75rem;border-radius:999px;font-size:.72rem;font-weight:800">{{ order.get_status_display }}</span>
+  <div style="font-size:1.15rem;font-weight:900;color:var(--p)">GH₵{{ order.total_price }}</div>
+  <div style="display:flex;gap:.6rem;flex-wrap:wrap"><a href="{% url 'order_detail' order.pk %}" class="btn btn-ghost btn-sm"><i class="fas fa-eye"></i> View</a>{% if order.status == 'pending' %}<form method="POST" action="{% url 'cancel_order' order.pk %}">{% csrf_token %}<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Cancel?')"><i class="fas fa-xmark"></i> Cancel</button></form>{% endif %}</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state card" style="padding:4rem"><div class="empty-icon"><i class="fas fa-box-open"></i></div><h3>No orders yet</h3><p>Place your first order and it will appear here</p><a href="{% url 'product_list' %}" class="btn btn-primary btn-lg"><i class="fas fa-store"></i> Shop Now</a></div>
+{% endif %}
+{% endblock %}

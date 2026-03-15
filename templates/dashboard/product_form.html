@@ -1,0 +1,205 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{{ action }} Product{% endblock %}
+{% block page_icon %}box-open{% endblock %}
+{% block page_title %}{{ action }} Product{% endblock %}
+
+{% block extra_css %}
+<style>
+.pf-layout{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start}
+.img-upload-box{
+  border:2px dashed var(--border);border-radius:var(--rl);
+  padding:2rem;text-align:center;cursor:pointer;
+  transition:all var(--tr);background:var(--bg);
+  position:relative;overflow:hidden;
+}
+.img-upload-box:hover{border-color:var(--p);background:var(--ps)}
+.img-upload-box.has-img{border-style:solid;border-color:var(--p100)}
+.img-preview{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:var(--r);display:none}
+.img-preview.visible{display:block}
+.img-placeholder{padding:1.5rem 1rem}
+.img-placeholder i{font-size:2.5rem;color:var(--t3);margin-bottom:.75rem}
+.img-url-preview{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:var(--r);margin-top:.75rem;display:none}
+.side-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem}
+.side-card h3{font-size:.85rem;font-weight:800;margin-bottom:1rem;padding-bottom:.7rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.4rem}
+.side-card h3 i{color:var(--p)}
+.check-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.check-row:last-child{border-bottom:none}
+.check-row span{font-size:.84rem;font-weight:600;color:var(--t7)}
+/* toggle switch */
+.toggle-switch{position:relative;width:40px;height:22px}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:999px;cursor:pointer;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s}
+input:checked+.toggle-slider{background:var(--p)}
+input:checked+.toggle-slider::before{transform:translateX(18px)}
+@media(max-width:900px){.pf-layout{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>{{ action }} Product</h1>
+    <div class="breadcrumb">
+      <a href="{% url 'dash_home' %}">Dashboard</a> <i class="fas fa-chevron-right"></i>
+      <a href="{% url 'dash_products' %}">Products</a> <i class="fas fa-chevron-right"></i>
+      <span>{{ action }}</span>
+    </div>
+  </div>
+  <a href="{% url 'dash_products' %}" class="btn btn-ghost"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<form method="POST" enctype="multipart/form-data" id="productForm">
+{% csrf_token %}
+<div class="pf-layout">
+  <!-- MAIN FORM -->
+  <div>
+    <div class="form-card" style="margin-bottom:1rem">
+      <h3 style="font-size:.9rem;font-weight:800;margin-bottom:1.25rem;padding-bottom:.85rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.4rem">
+        <i class="fas fa-circle-info" style="color:var(--p)"></i> Basic Information
+      </h3>
+      <div class="form-group">
+        <label class="form-label">Product Name *</label>
+        {{ form.name }}
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          {{ form.category }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Stock Quantity *</label>
+          {{ form.stock }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description *</label>
+        {{ form.description }}
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3 style="font-size:.9rem;font-weight:800;margin-bottom:1.25rem;padding-bottom:.85rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.4rem">
+        <i class="fas fa-tag" style="color:var(--p)"></i> Pricing
+      </h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Regular Price (GH₵) *</label>
+          {{ form.price }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sale Price (GH₵) <span style="color:var(--t3);text-transform:none;font-size:.7rem">optional</span></label>
+          {{ form.sale_price }}
+          <div class="form-hint">Leave empty if no discount</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div>
+    <!-- IMAGE UPLOAD -->
+    <div class="side-card">
+      <h3><i class="fas fa-image"></i> Product Image</h3>
+      <div class="img-upload-box" id="uploadBox" onclick="document.getElementById('id_image').click()">
+        <img class="img-preview" id="imgPreview" src="" alt=""/>
+        <div class="img-placeholder" id="imgPlaceholder">
+          <i class="fas fa-cloud-arrow-up"></i>
+          <div style="font-size:.84rem;font-weight:700;color:var(--t5);margin-bottom:.25rem">Click to upload image</div>
+          <div style="font-size:.72rem;color:var(--t3)">JPG, PNG, WEBP up to 5MB</div>
+        </div>
+      </div>
+      <div style="display:none">{{ form.image }}</div>
+      {% if product and product.image %}
+      <div style="margin-top:.75rem">
+        <div style="font-size:.72rem;color:var(--t3);margin-bottom:.35rem;font-weight:600">CURRENT IMAGE</div>
+        <img src="{{ product.image.url }}" style="width:100%;border-radius:var(--r);aspect-ratio:1/1;object-fit:cover"/>
+      </div>
+      {% endif %}
+
+      <div style="margin-top:1rem">
+        <label class="form-label">Or paste image URL</label>
+        {{ form.image_url }}
+        {% if product and product.image_url %}
+        <img id="urlPreview" src="{{ product.image_url }}" class="img-url-preview" style="display:block"/>
+        {% else %}
+        <img id="urlPreview" src="" class="img-url-preview"/>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="side-card">
+      <h3><i class="fas fa-sliders"></i> Status & Visibility</h3>
+      <div class="check-row">
+        <span>Active (visible in store)</span>
+        <label class="toggle-switch">
+          {{ form.is_active }}
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="check-row">
+        <span>Featured (homepage)</span>
+        <label class="toggle-switch">
+          {{ form.is_featured }}
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:.75rem;font-size:.9rem;border-radius:var(--rl)">
+      <i class="fas fa-{% if action == 'Add' %}plus{% else %}floppy-disk{% endif %}"></i>
+      {{ action }} Product
+    </button>
+    {% if action == 'Edit' %}
+    <a href="{% url 'dash_product_delete' product.pk %}" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:.6rem;border-radius:var(--rl);color:var(--p)">
+      <i class="fas fa-trash-can"></i> Delete Product
+    </a>
+    {% endif %}
+  </div>
+</div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// File upload preview
+const fileInput = document.getElementById('id_image');
+const preview   = document.getElementById('imgPreview');
+const placeholder = document.getElementById('imgPlaceholder');
+if(fileInput){
+  fileInput.addEventListener('change', function(){
+    if(this.files && this.files[0]){
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        preview.classList.add('visible');
+        placeholder.style.display = 'none';
+        document.getElementById('uploadBox').classList.add('has-img');
+      };
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+}
+// URL preview
+const urlInput = document.getElementById('id_image_url');
+const urlPrev  = document.getElementById('urlPreview');
+if(urlInput){
+  urlInput.addEventListener('input', function(){
+    if(this.value.trim()){
+      urlPrev.src = this.value.trim();
+      urlPrev.style.display = 'block';
+    } else {
+      urlPrev.style.display = 'none';
+    }
+  });
+}
+// Style toggles
+document.querySelectorAll('.toggle-switch input').forEach(cb => {
+  cb.style.opacity = '0';
+  cb.style.width   = '0';
+  cb.style.height  = '0';
+});
+</script>
+{% endblock %}

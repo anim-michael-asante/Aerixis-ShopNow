@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>{% block title %}ShopNow — Group 4{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+  /* ── TOKENS ─────────────────────────────── */
+  :root{
+    --p:         #E8192C;
+    --p-dark:    #B91020;
+    --p-light:   #F04558;
+    --p-soft:    #FEF2F3;
+    --p-100:     #FECDD0;
+    --accent:    #F5C842;
+    --success:   #10B981;
+    --danger:    #E8192C;
+    --bg:        #F7F8FA;
+    --white:     #FFFFFF;
+    --border:    #E8EAF0;
+    --t9:        #111827;
+    --t6:        #6B7280;
+    --t4:        #9CA3AF;
+    --nav-h:     68px;
+    --side-w:    240px;
+    --r:         10px;
+    --r-lg:      16px;
+    --r-xl:      22px;
+    --shadow:    0 2px 12px rgba(91,76,245,.08);
+    --shadow-md: 0 6px 24px rgba(91,76,245,.13);
+    --tr:        .2s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ── RESET ──────────────────────────────── */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t9);min-height:100vh;display:flex;flex-direction:column}
+  a{text-decoration:none;color:inherit}
+  img{max-width:100%;display:block}
+  button,input,select,textarea{font-family:inherit}
+
+  /* ── TOP NAVBAR ─────────────────────────── */
+  .topnav{
+    position:sticky;top:0;z-index:200;
+    height:var(--nav-h);
+    background:var(--white);
+    border-bottom:1px solid var(--border);
+    box-shadow:0 1px 8px rgba(0,0,0,.05);
+    display:flex;align-items:center;
+    padding:0 1.75rem;gap:1.25rem;
+  }
+  .nav-logo{
+    display:flex;align-items:center;gap:.6rem;
+    font-size:1.3rem;font-weight:900;color:var(--t9);
+    flex-shrink:0;margin-right:.5rem;
+  }
+  .nav-logo .logo-mark{
+    width:36px;height:36px;border-radius:50%;
+    background:linear-gradient(135deg,var(--p),var(--p-light));
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-size:.95rem;
+  }
+  .nav-logo span{color:var(--p)}
+
+  /* search bar */
+  .nav-search{
+    flex:1;max-width:580px;
+    display:flex;align-items:center;
+    border:1.5px solid var(--border);border-radius:var(--r);
+    background:var(--white);overflow:hidden;
+    transition:border-color var(--tr),box-shadow var(--tr);
+  }
+  .nav-search:focus-within{border-color:var(--p-light);box-shadow:0 0 0 3px var(--p-soft)}
+  .nav-search-cat{
+    display:flex;align-items:center;gap:.4rem;
+    padding:0 .85rem;border-right:1px solid var(--border);
+    font-size:.8rem;font-weight:600;color:var(--t6);
+    cursor:pointer;white-space:nowrap;height:40px;
+    background:var(--bg);transition:background var(--tr);
+  }
+  .nav-search-cat:hover{background:var(--p-soft);color:var(--p)}
+  .nav-search input{
+    flex:1;border:none;outline:none;padding:.6rem .85rem;
+    font-size:.875rem;color:var(--t9);background:transparent;
+  }
+  .nav-search input::placeholder{color:var(--t4)}
+  .nav-search-btn{
+    background:var(--p);border:none;cursor:pointer;
+    padding:.6rem 1rem;color:white;font-size:.9rem;
+    transition:background var(--tr);
+  }
+  .nav-search-btn:hover{background:var(--p-dark)}
+
+  /* icon strip */
+  .nav-icons{
+    display:flex;align-items:center;gap:.35rem;
+    margin-left:auto;flex-shrink:0;
+  }
+  .nav-icon-btn{
+    width:40px;height:40px;border-radius:var(--r);
+    border:1.5px solid var(--border);background:var(--white);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--t6);font-size:.95rem;cursor:pointer;
+    transition:all var(--tr);position:relative;text-decoration:none;
+  }
+  .nav-icon-btn:hover{border-color:var(--p);color:var(--p);background:var(--p-soft)}
+  .nav-badge{
+    position:absolute;top:-5px;right:-5px;
+    background:var(--danger);color:white;
+    font-size:.6rem;font-weight:800;
+    min-width:17px;height:17px;border-radius:999px;
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid white;padding:0 .25rem;
+  }
+  .nav-cart-count{
+    display:flex;align-items:center;gap:.3rem;
+    padding:0 .75rem;height:40px;border-radius:var(--r);
+    border:1.5px solid var(--border);font-size:.82rem;
+    font-weight:700;color:var(--t6);cursor:pointer;
+    transition:all var(--tr);position:relative;
+  }
+  .nav-cart-count:hover{border-color:var(--p);color:var(--p);background:var(--p-soft)}
+  .nav-user{
+    display:flex;align-items:center;gap:.5rem;
+    padding:.3rem .75rem .3rem .4rem;
+    border:1.5px solid var(--border);border-radius:999px;
+    cursor:pointer;transition:all var(--tr);
+  }
+  .nav-user:hover{border-color:var(--p);background:var(--p-soft)}
+  .nav-avatar{
+    width:30px;height:30px;border-radius:50%;
+    background:var(--p);color:white;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.75rem;font-weight:800;overflow:hidden;
+  }
+  .nav-avatar img{width:100%;height:100%;object-fit:cover}
+  .nav-uname{font-size:.82rem;font-weight:700}
+  .nav-ham{
+    display:none;background:none;border:1.5px solid var(--border);
+    border-radius:var(--r);width:40px;height:40px;
+    align-items:center;justify-content:center;cursor:pointer;
+    font-size:.95rem;color:var(--t6);
+  }
+
+  /* ── BODY LAYOUT ─────────────────────────── */
+  .body-wrap{
+    display:flex;flex:1;min-height:calc(100vh - var(--nav-h));
+  }
+
+  /* ── LEFT SIDEBAR ────────────────────────── */
+  .sidebar{
+    width:var(--side-w);flex-shrink:0;
+    background:var(--white);border-right:1px solid var(--border);
+    display:flex;flex-direction:column;
+    position:sticky;top:var(--nav-h);
+    height:calc(100vh - var(--nav-h));
+    overflow-y:auto;overflow-x:hidden;
+    transition:transform var(--tr);
+  }
+  .sidebar-top{padding:1.5rem 1.25rem 1rem}
+  .sidebar-explore{
+    font-size:1.15rem;font-weight:800;color:var(--t9);
+    margin-bottom:1rem;
+  }
+  .sidebar-cat-btn{
+    display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(135deg,var(--p-dark),var(--p),var(--p-light));
+    color:white;border-radius:var(--r);padding:.7rem 1rem;
+    font-weight:700;font-size:.875rem;cursor:pointer;
+    border:none;width:100%;text-decoration:none;
+    transition:opacity var(--tr);
+  }
+  .sidebar-cat-btn:hover{opacity:.9}
+  .sidebar-cat-btn .left{display:flex;align-items:center;gap:.6rem}
+  .sidebar-nav{list-style:none;padding:.5rem 1rem;display:flex;flex-direction:column;gap:.15rem}
+  .sidebar-nav a{
+    display:flex;align-items:center;gap:.7rem;
+    padding:.6rem .75rem;border-radius:var(--r);
+    font-size:.875rem;font-weight:500;color:var(--t6);
+    transition:all var(--tr);
+  }
+  .sidebar-nav a i{width:16px;text-align:center;font-size:.85rem;color:var(--t4)}
+  .sidebar-nav a:hover,
+  .sidebar-nav a.active{background:var(--p-soft);color:var(--p)}
+  .sidebar-nav a:hover i,
+  .sidebar-nav a.active i{color:var(--p)}
+  .sidebar-nav a.active{font-weight:700}
+  .sidebar-divider{height:1px;background:var(--border);margin:.75rem 1.25rem}
+  .sidebar-bottom{
+    margin-top:auto;padding:.75rem 1rem 1.5rem;
+    display:flex;flex-direction:column;gap:.15rem;
+  }
+
+  /* ── MAIN CONTENT ────────────────────────── */
+  .main-content{flex:1;min-width:0;padding:1.5rem 1.75rem 2.5rem}
+
+  /* ── MESSAGES ────────────────────────────── */
+  .alerts{margin-bottom:1.25rem}
+  .alert{
+    display:flex;align-items:center;gap:.7rem;
+    padding:.7rem 1rem;border-radius:var(--r);
+    font-size:.84rem;font-weight:500;margin-bottom:.4rem;
+    animation:slideIn .28s ease;
+  }
+  @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .alert-success{background:#D1FAE5;color:#065F46;border-left:3px solid var(--success)}
+  .alert-error  {background:#FEE2E2;color:#991B1B;border-left:3px solid var(--danger)}
+  .alert-info   {background:var(--p-soft);color:var(--p-dark);border-left:3px solid var(--p)}
+  .alert-warning{background:#FEF3C7;color:#92400E;border-left:3px solid var(--accent)}
+  .alert-close  {margin-left:auto;background:none;border:none;cursor:pointer;opacity:.5;font-size:.9rem}
+  .alert-close:hover{opacity:1}
+
+  /* ── PAGE HEADER ─────────────────────────── */
+  .page-hd{margin-bottom:1.5rem}
+  .page-hd h1{font-size:1.35rem;font-weight:800}
+  .breadcrumb{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--t4);margin-top:.25rem}
+  .breadcrumb a{color:var(--p)}
+  .breadcrumb i{font-size:.58rem}
+
+  /* ── BUTTONS ─────────────────────────────── */
+  .btn{
+    display:inline-flex;align-items:center;gap:.4rem;
+    padding:.5rem 1.15rem;border-radius:var(--r);border:none;
+    cursor:pointer;font-size:.84rem;font-weight:700;
+    transition:all var(--tr);white-space:nowrap;text-decoration:none;
+  }
+  .btn-primary{background:var(--p);color:white}
+  .btn-primary:hover{background:var(--p-dark);box-shadow:0 4px 14px rgba(91,76,245,.35);transform:translateY(-1px)}
+  .btn-outline{background:transparent;color:var(--p);border:2px solid var(--p)}
+  .btn-outline:hover{background:var(--p);color:white}
+  .btn-ghost{background:var(--bg);color:var(--t6);border:1.5px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--p);color:var(--p);background:var(--p-soft)}
+  .btn-danger{background:var(--danger);color:white}
+  .btn-danger:hover{background:#B91C1C}
+  .btn-sm{padding:.35rem .85rem;font-size:.78rem}
+  .btn-lg{padding:.65rem 1.6rem;font-size:.9rem}
+  .btn-block{width:100%;justify-content:center;border-radius:var(--r-lg)}
+
+  /* ── PRODUCT CARD ────────────────────────── */
+  .product-card{
+    background:var(--white);border-radius:var(--r-lg);
+    border:1.5px solid var(--border);overflow:hidden;
+    position:relative;display:flex;flex-direction:column;
+    transition:border-color var(--tr),box-shadow var(--tr),transform var(--tr);
+    cursor:pointer;
+  }
+  .product-card:hover{border-color:var(--p);box-shadow:var(--shadow-md);transform:translateY(-4px)}
+  .product-img-box{
+    background:#F3F4F8;aspect-ratio:1/1;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .product-img-box img{width:85%;height:85%;object-fit:contain;transition:transform .4s ease}
+  .product-card:hover .product-img-box img{transform:scale(1.07)}
+  .product-img-icon{font-size:3.5rem;color:var(--p-light)}
+  .product-chip{
+    position:absolute;top:.65rem;left:.65rem;
+    background:var(--white);border:1px solid var(--border);
+    font-size:.67rem;font-weight:700;padding:.18rem .55rem;
+    border-radius:var(--r);color:var(--t6);
+  }
+  .product-chip.sale{background:var(--danger);color:white;border-color:var(--danger)}
+  .product-chip.featured{background:var(--p);color:white;border-color:var(--p)}
+  .product-chip.out{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+  .product-card-body{padding:.9rem 1rem;flex:1;display:flex;flex-direction:column;gap:.35rem}
+  .product-cat-label{
+    font-size:.68rem;font-weight:700;text-transform:uppercase;
+    letter-spacing:.06em;color:var(--p);display:flex;align-items:center;gap:.3rem;
+  }
+  .product-title{
+    font-size:.9rem;font-weight:700;line-height:1.35;color:var(--t9);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .product-price-row{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:.4rem}
+  .price-now{font-size:1.05rem;font-weight:900;color:var(--t9)}
+  .price-was{font-size:.8rem;color:var(--t4);text-decoration:line-through;margin-left:.35rem}
+  .product-card-footer{padding:.7rem 1rem;border-top:1px solid var(--border)}
+
+  /* ── PRODUCTS GRID ───────────────────────── */
+  .products-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+    gap:1.1rem;
+  }
+
+  /* ── FORMS ───────────────────────────────── */
+  .form-group{margin-bottom:1rem}
+  .form-label{display:block;font-size:.75rem;font-weight:700;color:var(--t6);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em}
+  .form-control{
+    width:100%;padding:.58rem .85rem;
+    border:1.5px solid var(--border);border-radius:var(--r);
+    font-size:.875rem;background:var(--white);color:var(--t9);
+    transition:border-color var(--tr),box-shadow var(--tr);outline:none;
+  }
+  .form-control:focus{border-color:var(--p-light);box-shadow:0 0 0 3px var(--p-soft)}
+  textarea.form-control{resize:vertical}
+
+  /* ── CARD ────────────────────────────────── */
+  .card{background:var(--white);border-radius:var(--r-lg);border:1px solid var(--border)}
+
+  /* ── EMPTY STATE ─────────────────────────── */
+  .empty-state{text-align:center;padding:4rem 2rem}
+  .empty-icon{width:72px;height:72px;border-radius:var(--r-lg);background:var(--p-soft);color:var(--p);display:flex;align-items:center;justify-content:center;font-size:1.75rem;margin:0 auto 1.1rem}
+  .empty-state h3{font-size:1.05rem;font-weight:800;margin-bottom:.4rem}
+  .empty-state p{color:var(--t4);font-size:.875rem;margin-bottom:1.1rem}
+
+  /* ── SECTION HEADER ──────────────────────── */
+  .sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem}
+  .sec-hd h2{font-size:1rem;font-weight:900}
+  .sec-hd h2 span{color:var(--p)}
+  .sec-hd a{font-size:.8rem;color:var(--p);font-weight:600}
+
+  /* ── MODAL ───────────────────────────────── */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+  .modal-overlay.open{display:flex}
+  .modal-box{background:white;border-radius:var(--r-xl);padding:2rem;max-width:400px;width:100%;margin:1rem;animation:slideIn .3s ease}
+
+  /* ── SIDEBAR OVERLAY (mobile) ────────────── */
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:199}
+
+  /* ── FOOTER ──────────────────────────────── */
+  .site-footer{
+    border-top:1px solid var(--border);
+    background:var(--white);
+    padding:.85rem 1.75rem;
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:.76rem;color:var(--t4);flex-wrap:wrap;gap:.5rem;
+  }
+  .site-footer strong{color:var(--p)}
+
+  /* ── SCROLL REVEAL ───────────────────────── */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .4s ease,transform .4s ease}
+  .reveal.visible{opacity:1;transform:none}
+
+  /* ── RESPONSIVE ──────────────────────────── */
+  @media(max-width:1024px){
+    .sidebar{width:200px}
+    :root{--side-w:200px}
+  }
+  @media(max-width:768px){
+    .sidebar{
+      position:fixed;top:var(--nav-h);left:0;
+      height:calc(100vh - var(--nav-h));
+      transform:translateX(-100%);z-index:200;
+    }
+    .sidebar.open{transform:translateX(0)}
+    .sidebar-overlay.open{display:block}
+    .nav-ham{display:flex}
+    .main-content{padding:1.1rem}
+  }
+  @media(max-width:580px){
+    .nav-search{display:none}
+    .products-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.85rem}
+  }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sideOverlay" onclick="closeSidebar()"></div>
+
+<!-- ── TOP NAVBAR ─────────────────────────────────── -->
+<nav class="topnav">
+  <button class="nav-ham" id="hamBtn" onclick="openSidebar()"><i class="fas fa-bars"></i></button>
+
+  <a href="/" class="nav-logo">
+    <div class="logo-mark"><i class="fas fa-bag-shopping"></i></div>
+    Shop<span>Now</span>
+  </a>
+
+  <form class="nav-search" action="{% url 'product_list' %}" method="GET">
+    <div class="nav-search-cat">
+      All Categories <i class="fas fa-chevron-down" style="font-size:.65rem"></i>
+    </div>
+    <input type="text" name="q" placeholder="Search products…" value="{{ request.GET.q }}"/>
+    <button type="submit" class="nav-search-btn"><i class="fas fa-magnifying-glass"></i></button>
+  </form>
+
+  <div class="nav-icons">
+    {% if user.is_authenticated %}
+    <a href="{% url 'order_list' %}" class="nav-icon-btn" title="Orders">
+      <i class="fas fa-bell"></i>
+    </a>
+    {% endif %}
+    <a href="{% url 'product_list' %}" class="nav-icon-btn" title="Wishlist">
+      <i class="fas fa-heart"></i>
+    </a>
+    <a href="{% url 'cart' %}" class="nav-cart-count" title="Cart">
+      <i class="fas fa-bag-shopping"></i>
+      {% if cart_count > 0 %}
+        <span>{{ cart_count }}</span>
+        <div class="nav-badge">{{ cart_count }}</div>
+      {% else %}<span>0</span>{% endif %}
+    </a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'profile' %}" class="nav-user">
+      <div class="nav-avatar">
+        {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" alt=""/>
+        {% else %}{{ user.username|first|upper }}{% endif %}
+      </div>
+      <span class="nav-uname">{{ user.first_name|default:user.username }}</span>
+      <i class="fas fa-chevron-down" style="font-size:.6rem;color:var(--t4)"></i>
+    </a>
+    {% else %}
+    <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Login</a>
+    <a href="{% url 'register' %}" class="btn btn-ghost btn-sm">Register</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- ── BODY WRAP ───────────────────────────────────── -->
+<div class="body-wrap">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-explore">Explore</div>
+      <a href="{% url 'product_list' %}" class="sidebar-cat-btn">
+        <span class="left"><i class="fas fa-th-large"></i> Categories</span>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="{% url 'product_list' %}?sort=price" {% if request.GET.sort == 'price' %}class="active"{% endif %}>
+        <i class="fas fa-percent"></i> Best Offers
+      </a></li>
+      <li><a href="{% url 'product_list' %}?sort=-created_at">
+        <i class="fas fa-sparkles"></i> New Arrivals
+      </a></li>
+      <li><a href="{% url 'cart' %}">
+        <i class="fas fa-cart-shopping"></i> My Cart
+        {% if cart_count > 0 %}<span style="margin-left:auto;background:var(--p);color:white;font-size:.62rem;font-weight:800;padding:.1rem .45rem;border-radius:999px">{{ cart_count }}</span>{% endif %}
+      </a></li>
+      {% if user.is_authenticated %}
+      <li><a href="{% url 'order_list' %}" {% if request.resolver_match.url_name == 'order_list' %}class="active"{% endif %}>
+        <i class="fas fa-box-open"></i> Track Order
+      </a></li>
+      {% endif %}
+    </ul>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-bottom">
+      {% if user.is_authenticated %}
+      <a href="{% url 'profile' %}" class="sidebar-nav" style="list-style:none;padding:0">
+        <li style="list-style:none">
+          <a href="{% url 'profile' %}" {% if request.resolver_match.url_name == 'profile' %}class="active"{% endif %}
+            style="display:flex;align-items:center;gap:.7rem;padding:.6rem .75rem;border-radius:var(--r);font-size:.875rem;font-weight:500;color:var(--t6);transition:all var(--tr)">
+            <i class="fas fa-circle-user" style="width:16px;text-align:center;color:var(--t4)"></i> Account
+          </a>
+        </li>
+      </a>
+      <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" style="width:100%;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:.7rem;padding:.6rem .75rem;border-radius:var(--r);font-size:.875rem;font-weight:500;color:#EF4444;transition:all var(--tr);"
+          onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='none'">
+          <i class="fas fa-right-from-bracket" style="width:16px;text-align:center"></i> Logout
+        </button>
+      </form>
+      {% else %}
+      <ul class="sidebar-nav" style="padding:0">
+        <li><a href="{% url 'login' %}"><i class="fas fa-right-to-bracket"></i> Login</a></li>
+        <li><a href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Register</a></li>
+      </ul>
+      {% endif %}
+      <ul class="sidebar-nav" style="padding:0;margin-top:.25rem">
+        <li><a href="#"><i class="fas fa-gear"></i> Settings</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div class="main-content">
+
+      {% if messages %}
+      <div class="alerts">
+        {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags|default:'info' }}">
+          <i class="fas fa-{% if msg.tags == 'success' %}circle-check{% elif msg.tags == 'error' %}circle-exclamation{% elif msg.tags == 'warning' %}triangle-exclamation{% else %}circle-info{% endif %}"></i>
+          {{ msg }}
+          <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-xmark"></i></button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </div>
+
+    <footer class="site-footer">
+      <span>© 2025 <strong>ShopNow</strong> — Group 4 CRUD Project · UMaT CSE</span>
+      <span>Django + SQLite</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sideOverlay').classList.add('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sideOverlay').classList.remove('open');
+}
+// Auto-dismiss alerts
+setTimeout(()=>{
+  document.querySelectorAll('.alert').forEach(a=>{
+    a.style.transition='opacity .4s,transform .4s';
+    a.style.opacity='0'; a.style.transform='translateY(-6px)';
+    setTimeout(()=>a.remove(),400);
+  });
+},4000);
+// Scroll reveal
+const rv = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); rv.unobserve(e.target); } });
+},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>rv.observe(el));
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

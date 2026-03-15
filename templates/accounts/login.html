@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Login — ShopNow{% endblock %}
+{% block extra_css %}
+<style>
+.auth-page{min-height:calc(100vh - var(--nav-h) - 60px);display:flex;align-items:center;justify-content:center;padding:2rem}
+.auth-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:2.5rem;width:100%;max-width:400px;animation:slideIn .35s ease}
+.auth-logo{width:50px;height:50px;border-radius:var(--r-lg);background:linear-gradient(135deg,var(--p-dark),var(--p));color:white;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto 1.1rem}
+.auth-title{text-align:center;font-size:1.35rem;font-weight:900;margin-bottom:.3rem}
+.auth-sub{text-align:center;font-size:.84rem;color:var(--t4);margin-bottom:1.6rem}
+.input-wrap{position:relative}
+.input-wrap i.prefix{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--t4);font-size:.82rem}
+.input-wrap input{padding-left:2.3rem}
+.eye-btn{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t4);font-size:.82rem;padding:.2rem}
+.eye-btn:hover{color:var(--p)}
+.auth-divider{display:flex;align-items:center;gap:.65rem;font-size:.78rem;color:var(--t4);margin:1.1rem 0}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+</style>
+{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo"><i class="fas fa-bag-shopping"></i></div>
+    <div class="auth-title">Welcome Back</div>
+    <div class="auth-sub">Sign in to your ShopNow account</div>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group"><label class="form-label">Username</label><div class="input-wrap"><i class="fas fa-user prefix"></i><input type="text" name="username" class="form-control" placeholder="Your username" required autofocus/></div></div>
+      <div class="form-group"><label class="form-label">Password</label><div class="input-wrap"><i class="fas fa-lock prefix"></i><input type="password" name="password" id="pIn" class="form-control" placeholder="Your password" required style="padding-right:2.5rem"/><button type="button" class="eye-btn" onclick="tp()"><i class="fas fa-eye" id="eI"></i></button></div></div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:.5rem"><i class="fas fa-right-to-bracket"></i> Sign In</button>
+    </form>
+    <div class="auth-divider">New to ShopNow?</div>
+    <a href="{% url 'register' %}" class="btn btn-ghost btn-block btn-lg"><i class="fas fa-user-plus"></i> Create Account</a>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>function tp(){const i=document.getElementById('pIn'),e=document.getElementById('eI');if(i.type==='password'){i.type='text';e.className='fas fa-eye-slash'}else{i.type='password';e.className='fas fa-eye'}}</script>
+{% endblock %}

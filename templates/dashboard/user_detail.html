@@ -1,0 +1,85 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{{ u.username }}{% endblock %}
+{% block page_icon %}circle-user{% endblock %}
+{% block page_title %}User: {{ u.username }}{% endblock %}
+
+{% block content %}
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>{{ u.get_full_name|default:u.username }}</h1>
+    <div class="breadcrumb"><a href="{% url 'dash_home' %}">Dashboard</a> <i class="fas fa-chevron-right"></i> <a href="{% url 'dash_users' %}">Users</a> <i class="fas fa-chevron-right"></i> <span>{{ u.username }}</span></div>
+  </div>
+  <a href="{% url 'dash_users' %}" class="btn btn-ghost"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<div style="display:grid;grid-template-columns:260px 1fr;gap:1.5rem;align-items:start">
+  <!-- USER CARD -->
+  <div>
+    <div class="data-card fade-up" style="padding:1.5rem;text-align:center;margin-bottom:1rem">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--ps);color:var(--p);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;margin:0 auto 1rem;overflow:hidden;border:3px solid var(--p100)">
+        {% if u.profile.avatar %}<img src="{{ u.profile.avatar.url }}" style="width:100%;height:100%;object-fit:cover"/>
+        {% else %}{{ u.username|first|upper }}{% endif %}
+      </div>
+      <div style="font-weight:800;font-size:1rem">{{ u.get_full_name|default:u.username }}</div>
+      <div style="font-size:.78rem;color:var(--t3);margin-top:.2rem">@{{ u.username }}</div>
+      <div style="margin-top:.75rem">
+        {% if u.is_superuser %}<span class="badge badge-red"><i class="fas fa-crown"></i> Super Admin</span>
+        {% elif u.is_staff %}<span class="badge badge-purple"><i class="fas fa-shield-halved"></i> Staff</span>
+        {% else %}<span class="badge badge-gray"><i class="fas fa-user"></i> Customer</span>{% endif %}
+      </div>
+      <div style="margin-top:.5rem">
+        <span class="badge {% if u.is_active %}badge-green{% else %}badge-red{% endif %}">{% if u.is_active %}Active{% else %}Inactive{% endif %}</span>
+      </div>
+    </div>
+    <div class="data-card fade-up" style="padding:1.25rem">
+      <h3 style="font-size:.85rem;font-weight:800;margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem"><i class="fas fa-circle-info" style="color:var(--p)"></i> Info</h3>
+      <div style="display:flex;flex-direction:column;gap:.55rem;font-size:.84rem">
+        <div><span style="color:var(--t3);font-size:.7rem;font-weight:800;text-transform:uppercase">Email</span><div>{{ u.email|default:"—" }}</div></div>
+        <div><span style="color:var(--t3);font-size:.7rem;font-weight:800;text-transform:uppercase">Joined</span><div>{{ u.date_joined|date:"M d, Y" }}</div></div>
+        {% if u.profile.phone %}<div><span style="color:var(--t3);font-size:.7rem;font-weight:800;text-transform:uppercase">Phone</span><div>{{ u.profile.phone }}</div></div>{% endif %}
+        {% if u.profile.city %}<div><span style="color:var(--t3);font-size:.7rem;font-weight:800;text-transform:uppercase">City</span><div>{{ u.profile.city }}</div></div>{% endif %}
+      </div>
+    </div>
+    {% if u != request.user %}
+    <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:1rem">
+      <a href="{% url 'dash_user_toggle' u.pk %}" class="btn btn-ghost" style="justify-content:center">
+        <i class="fas fa-{% if u.is_active %}lock{% else %}lock-open{% endif %}"></i>
+        {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+      </a>
+      <a href="{% url 'dash_user_delete' u.pk %}" class="btn btn-danger" style="justify-content:center">
+        <i class="fas fa-trash-can"></i> Delete User
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ORDERS -->
+  <div>
+    <div class="data-card fade-up">
+      <div class="data-card-head">
+        <div class="data-card-title"><i class="fas fa-receipt"></i> Order History</div>
+        <span style="font-size:.8rem;color:var(--t3)">{{ orders|length }} order{{ orders|length|pluralize }}</span>
+      </div>
+      {% if orders %}
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+          {% for o in orders %}
+          <tr>
+            <td><span style="font-weight:900;color:var(--p)">#{{ o.pk }}</span></td>
+            <td>{{ o.items.count }} item{{ o.items.count|pluralize }}</td>
+            <td style="font-weight:800">GH₵{{ o.total_price }}</td>
+            <td><span class="badge {% if o.status == 'delivered' %}badge-green{% elif o.status == 'pending' %}badge-yellow{% elif o.status == 'processing' %}badge-blue{% elif o.status == 'cancelled' %}badge-red{% else %}badge-purple{% endif %}">{{ o.get_status_display }}</span></td>
+            <td style="color:var(--t3);font-size:.8rem">{{ o.created_at|date:"M d, Y" }}</td>
+            <td><a href="{% url 'dash_order_detail' o.pk %}" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state"><div class="empty-icon"><i class="fas fa-receipt"></i></div><h3>No orders</h3><p>This user has not placed any orders yet</p></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

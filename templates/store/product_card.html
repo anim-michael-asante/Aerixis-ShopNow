@@ -1,0 +1,48 @@
+<div class="product-card reveal">
+  <a href="{% url 'product_detail' product.slug %}" style="display:contents">
+    <div class="product-img-box">
+      {% if product.is_featured %}<span class="product-chip featured"><i class="fas fa-star"></i> Featured</span>{% endif %}
+      {% if product.sale_price %}<span class="product-chip sale" style="right:.65rem;left:auto"><i class="fas fa-percent"></i> Sale</span>{% endif %}
+      {% if not product.in_stock %}<span class="product-chip out">Out of Stock</span>{% endif %}
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy"/>
+      {% elif product.image_url %}
+        <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy"/>
+      {% else %}
+        <div class="product-img-icon"><i class="fas {% if product.category %}{{ product.category.icon }}{% else %}fa-box{% endif %}"></i></div>
+      {% endif %}
+    </div>
+  </a>
+
+  <div class="product-card-body">
+    {% if product.category %}
+    <div class="product-cat-label">
+      <i class="fas {{ product.category.icon }}"></i> {{ product.category.name }}
+    </div>
+    {% endif %}
+    <a href="{% url 'product_detail' product.slug %}">
+      <div class="product-title">{{ product.name }}</div>
+    </a>
+    <div class="product-price-row">
+      <div>
+        <span class="price-now">GH₵{{ product.get_price }}</span>
+        {% if product.sale_price %}<span class="price-was">GH₵{{ product.price }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="product-card-footer">
+    {% if product.in_stock %}
+    <form method="POST" action="{% url 'add_to_cart' product.pk %}">
+      {% csrf_token %}<input type="hidden" name="quantity" value="1"/>
+      <button type="submit" class="btn btn-primary btn-sm btn-block">
+        <i class="fas fa-cart-plus"></i> Add to Cart
+      </button>
+    </form>
+    {% else %}
+    <button class="btn btn-ghost btn-sm btn-block" disabled style="opacity:.5;cursor:not-allowed">
+      <i class="fas fa-ban"></i> Out of Stock
+    </button>
+    {% endif %}
+  </div>
+</div>
