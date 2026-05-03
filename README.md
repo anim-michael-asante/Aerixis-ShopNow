@@ -216,4 +216,4 @@ This project is licensed under the MIT License. See the LICENSE file for details
   <sub>Built by <a href="https://github.com/anim-michael-asante">0x1aerixis</a></sub>
 </div>
 
-If you want, I can also convert this into a cleaner README that is shorter and more standard for GitHub.
+
