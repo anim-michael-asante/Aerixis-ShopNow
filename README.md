@@ -1,6 +1,3 @@
-
-<div align="center">
-
 # Aerixis ShopNow
 
 A production-style full-stack e-commerce platform built with Django.
@@ -10,7 +7,22 @@ A production-style full-stack e-commerce platform built with Django.
 [![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=flat&logo=sqlite&logoColor=white)](https://sqlite.org)
 [![License](https://img.shields.io/badge/License-MIT-gray?style=flat)](LICENSE)
 
-</div>
+---
+
+## Table of Contents
+
+- Overview
+- Screenshots
+- Tech Stack
+- Features
+- Getting Started
+  - Prerequisites
+  - Installation
+- Default Credentials
+- Application Routes
+- Security
+- Project Structure
+- License
 
 ---
 
@@ -170,7 +182,7 @@ http://127.0.0.1:8000/
 | Control | Implementation |
 | --- | --- |
 | CSRF Protection | Enabled on all forms |
-| Route Protection | login_required decorators |
+| Route Protection | `login_required` decorators |
 | Admin Access | Staff-only enforcement |
 | Password Storage | Django PBKDF2 hashing with salt |
 | Account Deletion | Password confirmation required |
@@ -215,5 +227,4 @@ This project is licensed under the MIT License. See the LICENSE file for details
 <div align="center">
   <sub>Built by <a href="https://github.com/anim-michael-asante">0x1aerixis</a></sub>
 </div>
-
 
