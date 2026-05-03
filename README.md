@@ -1,4 +1,4 @@
-````
+
 <div align="center">
 
 # Aerixis ShopNow
@@ -170,7 +170,7 @@ http://127.0.0.1:8000/
 | Control | Implementation |
 | --- | --- |
 | CSRF Protection | Enabled on all forms |
-| Route Protection | `login_required` decorators |
+| Route Protection | login_required decorators |
 | Admin Access | Staff-only enforcement |
 | Password Storage | Django PBKDF2 hashing with salt |
 | Account Deletion | Password confirmation required |
@@ -208,11 +208,12 @@ Aerixis-ShopNow/
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ---
 
 <div align="center">
   <sub>Built by <a href="https://github.com/anim-michael-asante">0x1aerixis</a></sub>
 </div>
-````
+
+If you want, I can also convert this into a cleaner README that is shorter and more standard for GitHub.
