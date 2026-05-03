@@ -1,15 +1,9 @@
-Here is the same README, professionally structured, with **no emojis**, clean formatting, and returned entirely in code form:
-
 ````markdown
 <div align="center">
 
-# Aerixis-ShopNow
+# Aerixis ShopNow
 
-Full-stack e-commerce web application built with Django
-
-Aerixis-ShopNow is a production-style e-commerce platform built for a real client. It features a complete customer storefront — product browsing, cart, checkout, and order tracking — alongside a custom admin dashboard for managing products, orders, and users in real time.
-
-Built with Django, SQLite, HTML, and CSS.
+A production-style full-stack e-commerce platform built with Django.
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://python.org)
 [![Django](https://img.shields.io/badge/Django-4.2-092E20?style=flat&logo=django&logoColor=white)](https://djangoproject.com)
@@ -20,41 +14,68 @@ Built with Django, SQLite, HTML, and CSS.
 
 ---
 
+## Overview
+
+Aerixis ShopNow is a full-stack e-commerce application that delivers a complete shopping experience for customers and a custom admin dashboard for store management.
+
+The platform includes:
+
+- A responsive storefront for browsing products
+- Shopping cart and checkout workflows
+- Order history and status tracking
+- A custom dashboard for managing products, categories, orders, and users
+- Built-in authentication and account management
+
+---
+
 ## Screenshots
 
-### Storefront — Desktop
+### Storefront
 <img src="screenshots/homepage_desktop.png" width="780" alt="Homepage Desktop" />
 
-### Storefront — Mobile
+### Mobile View
 <img src="screenshots/homepage_mobile.png" width="320" alt="Homepage Mobile" />
 
-### Product Listing — Desktop
+### Product Listing
 <img src="screenshots/products_desktop.png" width="780" alt="Product Listing Desktop" />
 
-### Product Listing — Mobile
-<img src="screenshots/products_mobile.png" width="320" alt="Product Listing Mobile" />
-
-### Full Storefront View
-<img src="screenshots/storefront_full.png" width="780" alt="Full Storefront" />
-
-### Admin Dashboard — Overview
+### Admin Dashboard
 <img src="screenshots/admin_dashboard.png" width="780" alt="Admin Dashboard Overview" />
-
-### Admin Dashboard — User Management
-<img src="screenshots/admin_users.png" width="780" alt="Admin User Management" />
 
 ---
 
 ## Tech Stack
 
-| Layer      | Technology                         |
-|------------|----------------------------------|
-| Backend    | Django 4.2                        |
-| Database   | SQLite                            |
-| Frontend   | HTML5, CSS3, Vanilla JavaScript   |
-| Icons      | Font Awesome 6                    |
-| Images     | Pillow + Unsplash URLs            |
-| Auth       | Django built-in authentication    |
+| Layer | Technology |
+| --- | --- |
+| Backend | Django 4.2 |
+| Database | SQLite |
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Media | Pillow, Unsplash image URLs |
+| Icons | Font Awesome 6 |
+| Authentication | Django built-in auth system |
+
+---
+
+## Features
+
+### Customer Storefront
+
+- Browse products with search, filter, and sort options
+- View product details and related items
+- Add, update, and remove cart items
+- Complete checkout with delivery details
+- Track order status and view order history
+- Manage profile, password, and account settings
+
+### Admin Dashboard
+
+- View store metrics and revenue summaries
+- Create, edit, and delete products
+- Upload product images or use image URLs
+- Manage categories and featured products
+- Process orders through status stages
+- Search, activate, deactivate, and delete users
 
 ---
 
@@ -62,20 +83,20 @@ Built with Django, SQLite, HTML, and CSS.
 
 ### Prerequisites
 
-- Python 3.10 or higher  
-- pip  
-- Git  
+- Python 3.10 or higher
+- pip
+- Git
 
 ### Installation
 
-#### 1. Clone the repository
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/anim-michael-asante/Aerixis-ShopNow.git
 cd Aerixis-ShopNow
-````
+```
 
-#### 2. Create and activate a virtual environment
+2. Create and activate a virtual environment:
 
 ```bash
 python -m venv .venv
@@ -87,13 +108,13 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-#### 3. Install dependencies
+3. Install dependencies:
 
 ```bash
 pip install django pillow
 ```
 
-#### 4. Run database migrations
+4. Run migrations:
 
 ```bash
 python manage.py makemigrations accounts
@@ -101,21 +122,21 @@ python manage.py makemigrations store
 python manage.py migrate
 ```
 
-#### 5. Seed the database with sample data
+5. Seed the database with sample data:
 
 ```bash
 python manage.py seed_data
 ```
 
-#### 6. Start the development server
+6. Start the development server:
 
 ```bash
 python manage.py runserver
 ```
 
-Open your browser at:
+Then open:
 
-```
+```text
 http://127.0.0.1:8000/
 ```
 
@@ -123,52 +144,42 @@ http://127.0.0.1:8000/
 
 ## Default Credentials
 
-| Role      | Username | Password | URL                                                          |
-| --------- | -------- | -------- | ------------------------------------------------------------ |
-| Admin     | admin    | admin123 | [http://127.0.0.1:8000/panel/](http://127.0.0.1:8000/panel/) |
-| Demo User | demo     | demo1234 | [http://127.0.0.1:8000/](http://127.0.0.1:8000/)             |
+| Role | Username | Password | URL |
+| --- | --- | --- | --- |
+| Admin | admin | admin123 | http://127.0.0.1:8000/panel/ |
+| Demo User | demo | demo1234 | http://127.0.0.1:8000/ |
 
-Note: Change all default credentials before deploying to any public environment.
-
----
-
-## Application URLs
-
-| Page             | URL                                                                            |
-| ---------------- | ------------------------------------------------------------------------------ |
-| Storefront       | [http://127.0.0.1:8000/](http://127.0.0.1:8000/)                               |
-| Shop             | [http://127.0.0.1:8000/store/products/](http://127.0.0.1:8000/store/products/) |
-| Cart             | [http://127.0.0.1:8000/store/cart/](http://127.0.0.1:8000/store/cart/)         |
-| Custom Dashboard | [http://127.0.0.1:8000/panel/](http://127.0.0.1:8000/panel/)                   |
-| Django Admin     | [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)                   |
+> Change all default credentials before deploying to any public environment.
 
 ---
 
-## Features
+## Application Routes
 
-### Custom Admin Dashboard — /panel/
+| Page | URL |
+| --- | --- |
+| Storefront | http://127.0.0.1:8000/ |
+| Products | http://127.0.0.1:8000/store/products/ |
+| Cart | http://127.0.0.1:8000/store/cart/ |
+| Admin Dashboard | http://127.0.0.1:8000/panel/ |
+| Django Admin | http://127.0.0.1:8000/admin/ |
 
-* Overview — live stats for products, users, orders, and total revenue
-* Products — add, edit, and delete with image upload or URL; toggle active or featured status
-* Categories — full CRUD with Font Awesome icon class support
-* Orders — filter by status; update pipeline from pending through processing, shipped, to delivered
-* Users — search, activate, deactivate, and delete accounts; view full order history per user
+---
 
-### Customer Storefront
+## Security
 
-* Browse products with search, category filter, and sort controls
-* Product detail pages with images and related product suggestions
-* Shopping cart — add items, update quantities, remove products
-* Checkout with full delivery information form
-* Order history with live status tracking and cancellation
-* User profile — update personal info, change password, delete account
-* Fully responsive — desktop, tablet, and mobile
+| Control | Implementation |
+| --- | --- |
+| CSRF Protection | Enabled on all forms |
+| Route Protection | `login_required` decorators |
+| Admin Access | Staff-only enforcement |
+| Password Storage | Django PBKDF2 hashing with salt |
+| Account Deletion | Password confirmation required |
 
 ---
 
 ## Project Structure
 
-```
+```text
 Aerixis-ShopNow/
 ├── accounts/
 │   ├── models.py
@@ -195,25 +206,13 @@ Aerixis-ShopNow/
 
 ---
 
-## Security
-
-| Control          | Implementation                  |
-| ---------------- | ------------------------------- |
-| CSRF Protection  | Enabled on all forms            |
-| Route Protection | login_required decorators       |
-| Admin Access     | Staff-only enforcement          |
-| Password Storage | Django PBKDF2 hashing with salt |
-| Account Deletion | Requires password confirmation  |
-
----
-
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
 <div align="center">
   <sub>Built by <a href="https://github.com/anim-michael-asante">0x1aerixis</a></sub>
 </div>
-```
+````
