@@ -409,3 +409,34 @@ class SecurityHardeningTest(TestCase):
         self.assertEqual(resp.headers.get("X-Content-Type-Options"), "nosniff")
         self.assertEqual(resp.headers.get("Referrer-Policy"), "same-origin")
 
+    def test_superuser_sees_admin_panel_link_on_storefront(self):
+        """Superuser must see the Admin Panel link on the homepage."""
+        super_admin = User.objects.create_superuser("super_admin_test", "sa@example.com", "Str0ng!Pass99")
+        self.client.login(username="super_admin_test", password="Str0ng!Pass99")
+        resp = self.client.get(reverse("home"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("/panel/", resp.content.decode())
+
+    def test_regular_user_does_not_see_admin_panel_link_on_storefront(self):
+        """Regular customer must not see the Admin Panel link on the homepage."""
+        self.client.login(username="testuser", password="Str0ng!Pass99")
+        resp = self.client.get(reverse("home"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotIn("/panel/", resp.content.decode())
+
+    def test_anonymous_user_does_not_see_admin_panel_link_on_storefront(self):
+        """Anonymous visitor must not see the Admin Panel link on the homepage."""
+        resp = self.client.get(reverse("home"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotIn("/panel/", resp.content.decode())
+
+    def test_sole_superuser_cannot_delete_account(self):
+        """Primary superuser account is protected from deletion."""
+        User.objects.all().delete()
+        admin_user = User.objects.create_superuser("sole_admin", "sole@example.com", "Str0ng!Pass99")
+        self.client.login(username="sole_admin", password="Str0ng!Pass99")
+        resp = self.client.post(reverse("delete_account"), {"password": "Str0ng!Pass99"})
+        self.assertEqual(resp.status_code, 302)
+        self.assertTrue(User.objects.filter(username="sole_admin").exists())
+
+

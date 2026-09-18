@@ -23,6 +23,7 @@ A production-style full-stack e-commerce platform built with Django.
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+  - [Running Tests](#running-tests)
 - [Default Credentials](#default-credentials)
 - [Application Routes](#application-routes)
 - [Security](#security)
@@ -157,6 +158,21 @@ Then open:
 http://127.0.0.1:8000/
 ```
 
+### Running Tests
+
+Run the automated test runner:
+
+```bash
+# Run all test suites (accounts, store, dashboard)
+python test.py
+
+# Run specific app or test case
+python test.py accounts
+python test.py store
+python test.py dashboard
+python test.py accounts.tests.SecurityHardeningTest
+```
+
 ---
 
 ## Default Credentials
@@ -237,6 +253,7 @@ Aerixis-ShopNow/
 ├── .env.example            # Environment variables template
 ├── documentation.md        # Comprehensive system documentation
 ├── manage.py
+├── test.py                 # Automated test suite runner
 └── requirements.txt
 ```
 

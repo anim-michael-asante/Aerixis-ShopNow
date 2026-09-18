@@ -21,6 +21,7 @@
   - [A10 — Server-Side Request Forgery (SSRF)](#a10--server-side-request-forgery-ssrf)
 - [Design Decisions](#design-decisions)
 - [Responsive Breakpoints](#responsive-breakpoints)
+- [Test Suite & Verification](#test-suite--verification)
 - [Known Limitations](#known-limitations)
 
 ---
@@ -199,6 +200,31 @@
 
 ---
 
+## Test Suite & Verification
+The project features automated test suites verifying models, forms, access controls, business logic, and OWASP security boundaries.
+
+### Automated Test Runner (`test.py`)
+Run all test suites across the repository:
+```bash
+python test.py
+```
+
+Or target specific applications and test classes:
+```bash
+python test.py accounts
+python test.py store
+python test.py dashboard
+python test.py accounts.tests.SecurityHardeningTest
+```
+
+### Coverage Highlights
+- **Accounts (`accounts/tests.py`)**: Profile signals, registration validations, open-redirect neutralization, login rate limiting, password changes, and primary administrator deletion immunity.
+- **Store (`store/tests.py`)**: Catalog filters, cart operations, atomic checkout with inventory decrements, and ProductForm SSRF prevention.
+- **Dashboard (`dashboard/tests.py`)**: Staff-only access guards (`admin_required`), dashboard metrics accuracy, product/category lifecycle, order management, and superuser protection guards.
+
+---
+
 ## Known Limitations
 - Payment gateway is currently simulated via instant order placement (ready for Stripe / Paystack webhook integration).
 - Background asynchronous tasks (e.g. Celery / Redis for transactional email notifications) are deferred for external worker integration.
+
