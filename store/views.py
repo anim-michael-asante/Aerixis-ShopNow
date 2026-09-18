@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import Q
 from .models import Category, Product, Cart, CartItem, Order, OrderItem
 from .forms import CheckoutForm
@@ -89,6 +91,7 @@ def cart_view(request):
     return render(request, 'store/cart.html', {'cart': cart, 'items': items})
 
 
+@require_POST
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id, is_active=True)
     if not product.in_stock():
@@ -96,23 +99,37 @@ def add_to_cart(request, product_id):
         return redirect(request.META.get('HTTP_REFERER', 'home'))
 
     cart = get_or_create_cart(request)
-    quantity = int(request.POST.get('quantity', 1))
+    try:
+        quantity = int(request.POST.get('quantity', 1))
+        if quantity < 1:
+            quantity = 1
+    except (ValueError, TypeError):
+        quantity = 1
+
+    if quantity > product.stock:
+        quantity = product.stock
+
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     if not created:
-        cart_item.quantity += quantity
+        new_quantity = cart_item.quantity + quantity
+        cart_item.quantity = min(new_quantity, product.stock)
     else:
         cart_item.quantity = quantity
     cart_item.save()
-    messages.success(request, f'✓ {product.name} added to cart!')
+    messages.success(request, f'{product.name} added to cart!')
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 
+@require_POST
 def update_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, pk=item_id)
     action = request.POST.get('action')
     if action == 'increase':
-        cart_item.quantity += 1
-        cart_item.save()
+        if cart_item.quantity < cart_item.product.stock:
+            cart_item.quantity += 1
+            cart_item.save()
+        else:
+            messages.warning(request, f'Cannot add more of {cart_item.product.name} (stock limit reached).')
     elif action == 'decrease':
         if cart_item.quantity > 1:
             cart_item.quantity -= 1
@@ -127,6 +144,7 @@ def update_cart(request, item_id):
     return redirect('cart')
 
 
+@require_POST
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, pk=item_id)
     cart_item.delete()
@@ -159,24 +177,31 @@ def checkout(request):
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
-            order = form.save(commit=False)
-            order.user = user
-            order.total_price = cart.get_total()
-            order.save()
-            for item in items:
-                OrderItem.objects.create(
-                    order=order,
-                    product=item.product,
-                    product_name=item.product.name,
-                    quantity=item.quantity,
-                    price=item.product.get_price(),
-                )
-                # Reduce stock
-                item.product.stock = max(0, item.product.stock - item.quantity)
-                item.product.save()
-            cart.items.all().delete()
-            messages.success(request, f'🎉 Order #{order.pk} placed successfully!')
-            return redirect('order_detail', pk=order.pk)
+            with transaction.atomic():
+                # Verify stock for all items
+                for item in items:
+                    if item.quantity > item.product.stock:
+                        messages.error(request, f"Insufficient stock for '{item.product.name}'. Only {item.product.stock} available.")
+                        return redirect('cart')
+
+                order = form.save(commit=False)
+                order.user = user
+                order.total_price = cart.get_total()
+                order.save()
+                for item in items:
+                    OrderItem.objects.create(
+                        order=order,
+                        product=item.product,
+                        product_name=item.product.name,
+                        quantity=item.quantity,
+                        price=item.product.get_price(),
+                    )
+                    # Reduce stock atomically
+                    item.product.stock = max(0, item.product.stock - item.quantity)
+                    item.product.save()
+                cart.items.all().delete()
+                messages.success(request, f'Order #{order.pk} placed successfully!')
+                return redirect('order_detail', pk=order.pk)
     else:
         form = CheckoutForm(initial=initial)
 
@@ -198,6 +223,7 @@ def order_detail(request, pk):
 
 
 @login_required
+@require_POST
 def cancel_order(request, pk):
     order = get_object_or_404(Order, pk=pk, user=request.user)
     if order.status == 'pending':

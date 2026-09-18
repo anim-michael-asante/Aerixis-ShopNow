@@ -54,6 +54,17 @@ class ProfileUpdateForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Tell us about yourself...'}),
         }
 
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get('avatar')
+        if avatar and hasattr(avatar, 'size'):
+            max_size = 2 * 1024 * 1024  # 2MB
+            if avatar.size > max_size:
+                raise forms.ValidationError("Avatar file size cannot exceed 2MB.")
+            valid_extensions = ('.jpg', '.jpeg', '.png', '.webp')
+            if not avatar.name.lower().endswith(valid_extensions):
+                raise forms.ValidationError("Only JPG, PNG, and WebP image formats are supported.")
+        return avatar
+
 
 class CustomPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):

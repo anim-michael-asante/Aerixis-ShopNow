@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
@@ -7,6 +8,8 @@ from django.utils import timezone
 from datetime import timedelta
 from store.models import Product, Category, Order, OrderItem, Cart
 from store.forms import ProductForm, CategoryForm
+
+dash_logger = logging.getLogger('django.security')
 
 
 def admin_required(view_func):
@@ -72,8 +75,9 @@ def product_list(request):
 def product_create(request):
     form = ProductForm(request.POST or None, request.FILES or None)
     if request.method == 'POST' and form.is_valid():
-        form.save()
-        messages.success(request, f'✓ Product "{form.cleaned_data["name"]}" created!')
+        product = form.save()
+        dash_logger.info("Admin '%s' created product '%s' (ID %s)", request.user.username, product.name, product.pk)
+        messages.success(request, f'Product "{form.cleaned_data["name"]}" created successfully.')
         return redirect('dash_products')
     return render(request, 'dashboard/product_form.html', {'form': form, 'action': 'Add'})
 
@@ -84,7 +88,8 @@ def product_edit(request, pk):
     form = ProductForm(request.POST or None, request.FILES or None, instance=product)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        messages.success(request, f'✓ Product "{product.name}" updated!')
+        dash_logger.info("Admin '%s' updated product '%s' (ID %s)", request.user.username, product.name, product.pk)
+        messages.success(request, f'Product "{product.name}" updated successfully.')
         return redirect('dash_products')
     return render(request, 'dashboard/product_form.html', {
         'form': form, 'action': 'Edit', 'product': product
@@ -96,7 +101,9 @@ def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
         name = product.name
+        product_id = product.pk
         product.delete()
+        dash_logger.warning("Admin '%s' deleted product '%s' (ID %s)", request.user.username, name, product_id)
         messages.success(request, f'Product "{name}" deleted.')
         return redirect('dash_products')
     return render(request, 'dashboard/confirm_delete.html', {
@@ -110,6 +117,7 @@ def product_toggle(request, pk):
     product.is_active = not product.is_active
     product.save()
     status = 'activated' if product.is_active else 'deactivated'
+    dash_logger.info("Admin '%s' toggled product '%s' status to %s", request.user.username, product.name, status)
     messages.success(request, f'Product "{product.name}" {status}.')
     return redirect('dash_products')
 
@@ -125,8 +133,9 @@ def category_list(request):
 def category_create(request):
     form = CategoryForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
-        form.save()
-        messages.success(request, f'Category "{form.cleaned_data["name"]}" created!')
+        cat = form.save()
+        dash_logger.info("Admin '%s' created category '%s'", request.user.username, cat.name)
+        messages.success(request, f'Category "{form.cleaned_data["name"]}" created successfully.')
         return redirect('dash_categories')
     return render(request, 'dashboard/category_form.html', {'form': form, 'action': 'Add'})
 
@@ -137,7 +146,8 @@ def category_edit(request, pk):
     form = CategoryForm(request.POST or None, instance=cat)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        messages.success(request, f'Category "{cat.name}" updated!')
+        dash_logger.info("Admin '%s' updated category '%s'", request.user.username, cat.name)
+        messages.success(request, f'Category "{cat.name}" updated successfully.')
         return redirect('dash_categories')
     return render(request, 'dashboard/category_form.html', {'form': form, 'action': 'Edit', 'category': cat})
 
@@ -148,6 +158,7 @@ def category_delete(request, pk):
     if request.method == 'POST':
         name = cat.name
         cat.delete()
+        dash_logger.warning("Admin '%s' deleted category '%s'", request.user.username, name)
         messages.success(request, f'Category "{name}" deleted.')
         return redirect('dash_categories')
     return render(request, 'dashboard/confirm_delete.html', {
@@ -175,8 +186,10 @@ def order_detail(request, pk):
     if request.method == 'POST':
         new_status = request.POST.get('status')
         if new_status in dict(Order.STATUS_CHOICES):
+            old_status = order.status
             order.status = new_status
             order.save()
+            dash_logger.info("Admin '%s' changed order #%s status from '%s' to '%s'", request.user.username, order.pk, old_status, new_status)
             messages.success(request, f'Order #{order.pk} status updated to {order.get_status_display()}.')
     return render(request, 'dashboard/order_detail.html', {
         'order': order,
@@ -209,7 +222,10 @@ def user_toggle(request, pk):
         u.is_active = not u.is_active
         u.save()
         status = 'activated' if u.is_active else 'deactivated'
+        dash_logger.warning("Admin '%s' %s user account '%s'", request.user.username, status, u.username)
         messages.success(request, f'User "{u.username}" {status}.')
+    else:
+        messages.error(request, 'You cannot deactivate your own account.')
     return redirect('dash_users')
 
 
@@ -220,7 +236,10 @@ def user_delete(request, pk):
         if u != request.user:
             username = u.username
             u.delete()
+            dash_logger.warning("Admin '%s' deleted user account '%s'", request.user.username, username)
             messages.success(request, f'User "{username}" deleted.')
+        else:
+            messages.error(request, 'You cannot delete your own account.')
         return redirect('dash_users')
     return render(request, 'dashboard/confirm_delete.html', {
         'object': u, 'type': 'User', 'cancel_url': 'dash_users'
