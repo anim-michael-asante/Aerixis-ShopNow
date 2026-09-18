@@ -1,12 +1,12 @@
 #!/bin/bash
 # ════════════════════════════════════════════════════════════════
-# ShopNow Group 4 — Setup Script (Linux/Mac)
+# ShopNow — Setup Script (Linux/Mac)
 # ════════════════════════════════════════════════════════════════
 set -e
 
 echo ""
 echo "╔══════════════════════════════════════════╗"
-echo "║   ShopNow E-Commerce — Group 4 Setup    ║"
+echo "║          ShopNow E-Commerce Setup        ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 

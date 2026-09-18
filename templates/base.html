@@ -380,6 +380,11 @@
   </form>
 
   <div class="nav-icons">
+    {% if user.is_authenticated and user.is_superuser %}
+    <a href="{% url 'dash_home' %}" class="btn btn-sm btn-primary" title="Admin Dashboard" style="gap:.45rem;padding:.35rem .95rem;font-weight:800;border-radius:var(--r);background:var(--p);color:white;box-shadow:0 2px 8px rgba(232,25,44,.25)">
+      <i class="fas fa-gauge-high"></i> Admin Panel
+    </a>
+    {% endif %}
     {% if user.is_authenticated %}
     <a href="{% url 'order_list' %}" class="nav-icon-btn" title="Orders">
       <i class="fas fa-bell"></i>
@@ -425,6 +430,11 @@
     </div>
 
     <ul class="sidebar-nav">
+      {% if user.is_authenticated and user.is_superuser %}
+      <li><a href="{% url 'dash_home' %}" style="background:var(--p-soft);color:var(--p);font-weight:700">
+        <i class="fas fa-gauge-high" style="color:var(--p)"></i> Admin Panel
+      </a></li>
+      {% endif %}
       <li><a href="{% url 'product_list' %}?sort=price" {% if request.GET.sort == 'price' %}class="active"{% endif %}>
         <i class="fas fa-percent"></i> Best Offers
       </a></li>

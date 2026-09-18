@@ -89,7 +89,7 @@ PRODUCTS = [
 
 
 class Command(BaseCommand):
-    help = 'Seed the database with sample data for ShopNow Group 4'
+    help = 'Seed the database with sample data for ShopNow'
 
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.WARNING('Seeding database...'))
