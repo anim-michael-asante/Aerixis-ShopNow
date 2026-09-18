@@ -14,4 +14,8 @@ urlpatterns = [
     path('panel/', include('dashboard.urls')),
     path('store/', include('store.urls')),
     path('accounts/', include('accounts.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

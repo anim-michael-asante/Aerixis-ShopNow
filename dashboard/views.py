@@ -218,14 +218,18 @@ def user_detail(request, pk):
 @admin_required
 def user_toggle(request, pk):
     u = get_object_or_404(User, pk=pk)
-    if u != request.user:
-        u.is_active = not u.is_active
-        u.save()
-        status = 'activated' if u.is_active else 'deactivated'
-        dash_logger.warning("Admin '%s' %s user account '%s'", request.user.username, status, u.username)
-        messages.success(request, f'User "{u.username}" {status}.')
-    else:
+    if u == request.user:
         messages.error(request, 'You cannot deactivate your own account.')
+        return redirect('dash_users')
+    if u.is_superuser:
+        messages.error(request, 'Superuser accounts cannot be modified from this panel.')
+        return redirect('dash_users')
+
+    u.is_active = not u.is_active
+    u.save()
+    status = 'activated' if u.is_active else 'deactivated'
+    dash_logger.warning("Admin '%s' %s user account '%s'", request.user.username, status, u.username)
+    messages.success(request, f'User "{u.username}" {status}.')
     return redirect('dash_users')
 
 
@@ -233,13 +237,17 @@ def user_toggle(request, pk):
 def user_delete(request, pk):
     u = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
-        if u != request.user:
-            username = u.username
-            u.delete()
-            dash_logger.warning("Admin '%s' deleted user account '%s'", request.user.username, username)
-            messages.success(request, f'User "{username}" deleted.')
-        else:
+        if u == request.user:
             messages.error(request, 'You cannot delete your own account.')
+            return redirect('dash_users')
+        if u.is_superuser:
+            messages.error(request, 'Superuser accounts cannot be deleted from this panel.')
+            return redirect('dash_users')
+
+        username = u.username
+        u.delete()
+        dash_logger.warning("Admin '%s' deleted user account '%s'", request.user.username, username)
+        messages.success(request, f'User "{username}" deleted.')
         return redirect('dash_users')
     return render(request, 'dashboard/confirm_delete.html', {
         'object': u, 'type': 'User', 'cancel_url': 'dash_users'

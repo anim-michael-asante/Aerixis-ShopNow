@@ -649,3 +649,49 @@ class CartCountContextProcessorTest(TestCase):
         request.user = user
         result = cart_count(request)
         self.assertEqual(result["cart_count"], 5)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  STORE SECURITY TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class StoreSecurityTest(TestCase):
+
+    def test_product_form_rejects_ssrf_urls(self):
+        cat = _make_category()
+        # Test loopback IP
+        form = ProductForm(data={
+            "name": "SSRF Product",
+            "category": cat.pk,
+            "description": "Desc",
+            "price": "10.00",
+            "stock": 5,
+            "image_url": "http://127.0.0.1:8000/secret",
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn("image_url", form.errors)
+
+        # Test localhost
+        form = ProductForm(data={
+            "name": "SSRF Product 2",
+            "category": cat.pk,
+            "description": "Desc",
+            "price": "10.00",
+            "stock": 5,
+            "image_url": "http://localhost/admin",
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn("image_url", form.errors)
+
+    def test_product_form_accepts_valid_public_url(self):
+        cat = _make_category()
+        form = ProductForm(data={
+            "name": "Valid Image Product",
+            "category": cat.pk,
+            "description": "Desc",
+            "price": "10.00",
+            "stock": 5,
+            "image_url": "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+        })
+        self.assertTrue(form.is_valid(), form.errors)
+

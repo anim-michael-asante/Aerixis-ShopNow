@@ -371,3 +371,41 @@ class DeleteAccountViewTest(TestCase):
         resp = self.client.post(self.url, {"password": "Str0ng!Pass99"})
         self.assertEqual(resp.status_code, 302)
         self.assertIn("/accounts/login/", resp.url)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  SECURITY HARDENING TESTS (OWASP Top 10)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class SecurityHardeningTest(TestCase):
+    """Verifies OWASP Top 10 defenses."""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = _make_user()
+
+    def test_open_redirect_is_neutralized(self):
+        """External domains in next parameter must be rejected and redirected to home."""
+        resp = self.client.post(reverse("login") + "?next=https://attacker-phishing.com", {
+            "username": "testuser",
+            "password": "Str0ng!Pass99",
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.assertRedirects(resp, "/")
+
+    def test_protocol_relative_open_redirect_is_neutralized(self):
+        """Protocol-relative URLs like //evil.com must also be rejected."""
+        resp = self.client.post(reverse("login") + "?next=//evil.com/path", {
+            "username": "testuser",
+            "password": "Str0ng!Pass99",
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.assertRedirects(resp, "/")
+
+    def test_security_headers_applied(self):
+        """Verify essential security headers like X-Frame-Options and X-Content-Type-Options."""
+        resp = self.client.get(reverse("home"))
+        self.assertEqual(resp.headers.get("X-Frame-Options"), "DENY")
+        self.assertEqual(resp.headers.get("X-Content-Type-Options"), "nosniff")
+        self.assertEqual(resp.headers.get("Referrer-Policy"), "same-origin")
+

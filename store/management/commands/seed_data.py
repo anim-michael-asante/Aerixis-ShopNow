@@ -1,3 +1,4 @@
+import os
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from store.models import Category, Product
@@ -93,20 +94,23 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.WARNING('Seeding database...'))
 
-        if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser('admin', 'admin@shopnow.com', 'admin123')
-            self.stdout.write(self.style.SUCCESS('+ Superuser: admin / admin123'))
+        admin_password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'Aer!x1s#SuperAdm!n_2025')
+        demo_password = os.environ.get('DJANGO_DEMO_PASSWORD', 'ShopNow#DemoUser!2025')
+
+        if not User.objects.filter(username='super_admin').exists():
+            User.objects.create_superuser('super_admin', 'admin@shopnow.com', admin_password)
+            self.stdout.write(self.style.SUCCESS('+ Superuser: super_admin created.'))
 
         if not User.objects.filter(username='demo').exists():
             demo = User.objects.create_user(
                 username='demo', email='demo@shopnow.com',
-                password='demo1234', first_name='Kwame', last_name='Mensah'
+                password=demo_password, first_name='Kwame', last_name='Mensah'
             )
             demo.profile.phone = '0244123456'
             demo.profile.city = 'Accra'
             demo.profile.address = '12 Independence Ave, Accra'
             demo.profile.save()
-            self.stdout.write(self.style.SUCCESS('+ Demo user: demo / demo1234'))
+            self.stdout.write(self.style.SUCCESS('+ Demo user: demo created.'))
 
         cat_map = {}
         for c in CATEGORIES:
@@ -129,4 +133,4 @@ class Command(BaseCommand):
                 )
                 self.stdout.write(f'  + Product: {p["name"]}')
 
-        self.stdout.write(self.style.SUCCESS('\n✅ Seeded! Admin: admin/admin123 | Demo: demo/demo1234'))
+        self.stdout.write(self.style.SUCCESS('\nSeeded sample data successfully.'))

@@ -163,8 +163,8 @@ http://127.0.0.1:8000/
 
 | Role | Username | Password | URL |
 | --- | --- | --- | --- |
-| Admin | admin | admin123 | http://127.0.0.1:8000/panel/ |
-| Demo User | demo | demo1234 | http://127.0.0.1:8000/ |
+| Admin | super_admin | `Aer!x1s#SuperAdm!n_2025` | http://127.0.0.1:8000/panel/ |
+| Demo User | demo | `ShopNow#DemoUser!2025` | http://127.0.0.1:8000/ |
 
 > Change all default credentials before deploying to any public environment.
 
@@ -184,13 +184,20 @@ http://127.0.0.1:8000/
 
 ## Security
 
+The application follows an enterprise security-first model hardened against the OWASP Top 10 vulnerabilities:
+
 | Control | Implementation |
 | --- | --- |
-| CSRF Protection | Enabled on all forms |
-| Route Protection | login_required decorators |
-| Admin Access | Staff-only enforcement |
-| Password Storage | Django PBKDF2 hashing with salt |
-| Account Deletion | Password confirmation required |
+| **Open Redirect Defense** | Validates all `?next=` parameters with `url_has_allowed_host_and_scheme` |
+| **Authentication & Rate Limiting** | IP-based failed attempt throttling (5 attempts / 5 min lockout) via Django cache |
+| **CSRF Protection** | Enforced across all forms and state-mutating requests (`@require_POST`) |
+| **Security Headers** | `X-Frame-Options: DENY`, `Nosniff`, `Referrer-Policy: same-origin`, SSL & HSTS flags |
+| **Data Integrity & Concurrency** | Atomic transactions (`transaction.atomic`) with inventory verification during checkout |
+| **Input & Upload Sanitization** | Strict image MIME/size limits (<= 2MB/5MB) and SSRF URL whitelist |
+| **Role & Privilege Protection** | `admin_required` decorators, superuser deletion immunity, and staff self-action guards |
+| **Password Security** | Django PBKDF2 hashing with salt, password validation policies |
+
+For an in-depth security breakdown and architecture details, see [documentation.md](documentation.md).
 
 ---
 
@@ -198,25 +205,37 @@ http://127.0.0.1:8000/
 
 ```text
 Aerixis-ShopNow/
-├── accounts/
+├── accounts/               # User authentication, profiles, and security views
+│   ├── forms.py
 │   ├── models.py
-│   ├── views.py
-│   └── forms.py
-├── store/
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── store/                  # Storefront, catalog, cart, orders, and checkout
+│   ├── forms.py
 │   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
 │   ├── views.py
-│   └── management/
-│       └── commands/
-│           └── seed_data.py
-├── dashboard/
-│   ├── views.py
-│   └── urls.py
-├── templates/
-│   ├── base.html
+│   └── management/commands/seed_data.py
+├── dashboard/              # Staff management panel for products, categories, orders, and users
+│   ├── context_processors.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── shopnow/                # Core project configuration and settings
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── static/                 # Static assets directory
+├── templates/              # HTML5 templates
+│   ├── accounts/
 │   ├── dashboard/
 │   ├── store/
-│   └── accounts/
-├── screenshots/
+│   └── base.html
+├── screenshots/            # UI screenshots and previews
+├── .env.example            # Environment variables template
+├── documentation.md        # Comprehensive system documentation
 ├── manage.py
 └── requirements.txt
 ```
@@ -232,5 +251,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 <div align="center">
   <sub>Built by <a href="https://github.com/anim-michael-asante">0x1aerixis</a></sub>
 </div>
-```
-
