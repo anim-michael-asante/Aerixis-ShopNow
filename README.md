@@ -11,7 +11,7 @@ A modern, robust e-commerce platform built with Django 4.2+, featuring atomic ch
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![Django](https://img.shields.io/badge/Django-4.2%20LTS-092E20?style=flat-square&logo=django&logoColor=white)](https://djangoproject.com)
 [![Database](https://img.shields.io/badge/Database-SQLite%20%2F%20PostgreSQL-003B57?style=flat-square&logo=sqlite&logoColor=white)](https://sqlite.org)
-[![Tests](https://img.shields.io/badge/Tests-156%20Passed-2EA44F?style=flat-square)](test.py)
+[![Tests](https://img.shields.io/badge/Tests-160%20Passed-2EA44F?style=flat-square)](test.py)
 [![Security](https://img.shields.io/badge/Security-OWASP%20Top%2010%20Hardened-8A2BE2?style=flat-square)](documentation.md#security-notes-owasp-top-10-protections-applied)
 [![Code Style](https://img.shields.io/badge/Code%20Style-PEP%208-black?style=flat-square)](https://pep8.org)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
@@ -66,7 +66,7 @@ A modern, robust e-commerce platform built with Django 4.2+, featuring atomic ch
 - **Brute-Force Protection**: Built-in failed login throttling (5 failed attempts per IP within 5 minutes triggers a lockout window).
 - **Hardened Open Redirect Protection**: All authentication redirect query parameters are sanitized through host-and-scheme validation.
 - **Optimized Query Architecture**: Catalog and order queries utilize `select_related` and `prefetch_related` to eliminate N+1 database bottlenecks.
-- **Comprehensive Test Coverage**: Includes 156 automated test assertions spanning security, transactions, state mutations, and access control.
+- **Comprehensive Test Coverage**: Includes 160 automated test assertions spanning security, transactions, state mutations, and access control.
 
 ---
 
@@ -193,7 +193,7 @@ Frontend Layer:       Django HTML5 Templates, Semantic CSS3, Vanilla ES6 JavaScr
 Typography:           Google Fonts (Inter)
 Icons:                Font Awesome 6.5.0 / Lucide Architecture Guidelines
 Architecture Pattern: Model-View-Template (MVT) with Service & Security Layers
-Testing Framework:    Django TestCase / Unitest Runner (156 assertions)
+Testing Framework:    Django TestCase / Unitest Runner (160 assertions)
 ```
 
 ---
@@ -300,7 +300,7 @@ When populated using `python manage.py seed_data`, the local development databas
 
 ## Automated Test Suite
 
-Aerixis ShopNow includes an automated test runner (`test.py`) with 156 test assertions covering security rules, transaction atomicity, edge conditions, and authorization logic.
+Aerixis ShopNow includes an automated test runner (`test.py`) with 160 test assertions covering security rules, transaction atomicity, edge conditions, and authorization logic.
 
 ```bash
 # Execute full suite across all applications
